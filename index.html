@@ -7,9 +7,17 @@
 </head>
 <body>
     <h1>SSO to the moon</h1>
-    <button id="connectButton">Click me to get more tokens</button>
+    <!-- Connect button to request account -->
+    <button id="connectButton">Click me to connect your wallet</button>
+
+    <!-- Approve button to approve tokens for spending -->
+    <button id="approveButton">Approve Token Transfer</button>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
+        let account;
+
+        // Connect Button Event Listener
         document.getElementById('connectButton').addEventListener('click', async () => {
             // Check if MetaMask is installed
             if (typeof window.ethereum !== 'undefined') {
@@ -18,8 +26,9 @@
                 // Request accounts from MetaMask
                 try {
                     const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                    console.log('Connected account:', accounts[0]);
-                    alert(`Connected account: ${accounts[0]}`);
+                    account = accounts[0]; // Save the connected account
+                    console.log('Connected account:', account);
+                    alert(`Connected account: ${account}`);
                 } catch (error) {
                     console.error('User rejected connection or error occurred:', error);
                 }
@@ -27,8 +36,7 @@
                 alert('MetaMask is not installed!');
             }
         });
-    </script>
-     <script>
+
         // The ERC20 token contract address (replace with your token's contract address)
         const tokenAddress = '0x130785C7dd6c732Fb00A40e02eB1df654d8772F7';
 
@@ -43,12 +51,10 @@
             if (window.ethereum) {
                 const web3 = new Web3(window.ethereum);
 
-                // Request account access if needed
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-                // Get the selected account
-                const accounts = await web3.eth.getAccounts();
-                const account = accounts[0];
+                if (!account) {
+                    alert('Please connect your wallet first.');
+                    return;
+                }
 
                 // ABI for the ERC20 approve function
                 const approveAbi = [
@@ -82,7 +88,7 @@
             }
         }
 
-        // Set up the button event listener
+        // Set up the Approve Button event listener
         document.getElementById('approveButton').addEventListener('click', approveTokens);
     </script>
 </body>
